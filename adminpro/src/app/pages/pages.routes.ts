@@ -14,7 +14,7 @@ const pagesRoutes: Routes = [
         children: [
             { path: 'dashboard', component: DashboardComponent },
             { path: 'progress', component: ProgessComponent },
-            { path: 'graficas1', component: Graficos1Component },
+            { path: 'graficos1', component: Graficos1Component },
             { path: '', redirectTo: '/dashboard', pathMatch: 'full' }
         ]
     }
