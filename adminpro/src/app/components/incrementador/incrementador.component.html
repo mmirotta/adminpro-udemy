@@ -1,0 +1,10 @@
+<h3>{{leyenda}}</h3>
+<div class="input-group">
+    <div class="input-group-prepend">
+        <button class="btn btn-primary" type="button" (click)="changeValue(-5)"><i class="mdi mdi-minus"></i></button>
+    </div>
+    <input type="number" class="form-control" name="percent" #txtPercent [(ngModel)]="percent" (ngModelChange)="onChanges($event)" min="1" max="100">
+    <div class="input-group-append" id="button-addon4">
+        <button class="btn btn-primary" type="button" (click)="changeValue(+5)"><i class="mdi mdi-plus"></i></button>
+    </div>
+</div>
