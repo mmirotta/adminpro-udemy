@@ -11,7 +11,9 @@ export class SettingsService {
     tema: 'default'
   };
 
-  constructor(@Inject(DOCUMENT) private _DOCUMENT) { this.obtenerAjustes();}
+  constructor(@Inject(DOCUMENT) private _DOCUMENT) { 
+    this.obtenerAjustes();
+  }
 
   guardarAjustes() {
     localStorage.setItem('ajustes', JSON.stringify(this.ajustes));
