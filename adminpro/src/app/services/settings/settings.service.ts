@@ -11,7 +11,7 @@ export class SettingsService {
     tema: 'default'
   };
 
-  constructor(@Inject(DOCUMENT) private _DOCUMENT) { 
+  constructor(@Inject(DOCUMENT) private _DOCUMENT) {
     this.obtenerAjustes();
   }
 
