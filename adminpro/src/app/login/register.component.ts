@@ -70,11 +70,8 @@ export class RegisterComponent implements OnInit {
       this.forma.value.email,
       this.forma.value.password,
       );
-
     this.usuarioService.crearUsuario(usuario).subscribe(resp => {
-      if (resp) {
-        this.router.navigate[('/login')];
-      }
+        this.router.navigate(['/login']);
     });
   }
 
