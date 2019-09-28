@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { URL_SERVICE } from '../../config/config';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -33,18 +34,18 @@ export class UsuarioService {
 
   crearUsuario(usuario: Usuario): Observable<Usuario> {
 
-    return this.http.post(this.url + '/usuario', usuario).pipe((resp: any) => {
+    return this.http.post(this.url + '/usuario', usuario).pipe(tap((resp: any) => {
       return resp.usuario;
-    });
+    }));
   }
 
   loginGoogle(token: string) {
-    return this.http.post(this.url + '/login/google', {token}).pipe((resp: any) => {
+    return this.http.post(this.url + '/login/google', {token}).pipe(tap((resp: any) => {
 
       this.guardarStorage(resp.id, resp.token, resp.usuario);
 
       return resp.usuario;
-    });
+    }));
   }
 
   login(usuario: Usuario, recordar: boolean = false): Observable<Usuario> {
@@ -55,12 +56,12 @@ export class UsuarioService {
       localStorage.removeItem('email');
     }
 
-    return this.http.post(this.url + '/login', usuario).pipe((resp: any) => {
+    return this.http.post(this.url + '/login', usuario).pipe(tap((resp: any) => {
 
       this.guardarStorage(resp.id, resp.token, resp.usuario);
 
       return resp.usuario;
-    });
+    }));
   }
 
   guardarStorage(id: string, token: string, usuario: Usuario) {
