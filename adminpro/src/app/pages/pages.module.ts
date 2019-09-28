@@ -16,6 +16,7 @@ import { AccountSettingsComponent } from './account-settings/account-settings.co
 import { PromesasComponent } from './promesas/promesas.component';
 import { RxjsComponent } from './rxjs/rxjs.component';
 import { PipesModule } from '../pipes/pipes.module';
+import { ProfileUserComponent } from './profile-user/profile-user.component';
 
 @NgModule({
     declarations: [
@@ -27,7 +28,8 @@ import { PipesModule } from '../pipes/pipes.module';
         GraficoDonaComponent,
         AccountSettingsComponent,
         PromesasComponent,
-        RxjsComponent
+        RxjsComponent,
+        ProfileUserComponent
     ],
     exports: [
         PagesComponent,
