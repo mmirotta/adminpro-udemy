@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { UsuarioService } from 'src/app/services/service.index';
+import { SubirArchivoService } from 'src/app/services/subir-archivo/subir-archivo.service';
+import { ModalUploadService } from './modal-upload.service';
 
 @Component({
   selector: 'app-modal-upload',
@@ -8,12 +9,10 @@ import { UsuarioService } from 'src/app/services/service.index';
 })
 export class ModalUploadComponent implements OnInit {
 
-  oculto: string = '';
-
   imagenSubir: File;
   imagenTemp: any;
 
-  constructor(public usuarioService: UsuarioService) { }
+  constructor(public subirArchivoService: SubirArchivoService, public modalUploadService: ModalUploadService) { }
 
   ngOnInit() {
   }
@@ -34,5 +33,24 @@ export class ModalUploadComponent implements OnInit {
     const reader = new FileReader();
     const urlImageTemp = reader.readAsDataURL(file);
     reader.onloadend = () => this.imagenTemp = reader.result;
+  }
+
+  subirImagen() {
+    this.subirArchivoService.subirAchivo(this.imagenSubir, this.modalUploadService.tipo , this.modalUploadService.id)
+    .then((resp: any) => {
+
+      this.modalUploadService.notificacion.emit(resp);
+      this.cerrarModal();
+
+    }).catch(err => {
+      console.error(err);
+    });
+  }
+
+  cerrarModal() {
+    this.imagenTemp = null;
+    this.imagenSubir = null;
+
+    this.modalUploadService.ocultarModal();
   }
 }
