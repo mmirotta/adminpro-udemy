@@ -6,6 +6,8 @@ import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
 import { tap } from 'rxjs/operators';
 import { SubirArchivoService } from '../subir-archivo/subir-archivo.service';
+declare var swal: any;
+
 
 @Injectable({
   providedIn: 'root'
@@ -86,9 +88,10 @@ export class UsuarioService {
   actualizarUsuario(usuario: Usuario): Observable<Usuario> {
     return this.http.put(this.url + '/usuario/' + usuario._id + '?token=' + this.token, usuario)
       .pipe(tap((resp: any) => {
-
-        this.usuario = resp.usuario;
-        this.guardarStorage(resp.usuario._id, this.token, this.usuario);
+        if (usuario._id === this.usuario._id) {
+          this.usuario = resp.usuario;
+          this.guardarStorage(resp.usuario._id, this.token, this.usuario);
+        }
         // swal('Usuario Actualizado', this.usuario.nombre, 'success');
         return resp.usuario;
       }));
@@ -104,5 +107,25 @@ export class UsuarioService {
         .catch(resp => {
           console.error(resp);
         });
+  }
+
+  cargarUsuarios(desde: number = 0) {
+    return this.http.get(this.url + '/usuario?desde=' + desde).pipe(tap((resp: any) => {
+      return resp;
+    }));
+  }
+
+  buscarUsuario(termino: string) {
+    return this.http.get(this.url + '/busqueda/coleccion/usuarios/' + termino).pipe(tap((resp: any) => {
+      console.log(resp.usuarios);
+      return resp.usuarios;
+    }));
+  }
+
+  borrarUsuario(id: string) {
+    return this.http.delete(this.url + '/usuarios/' + id + '?token=' + this.token).pipe(tap((resp: any) => {
+      swal('Usuario Borrado', this.usuario.nombre, 'success');
+      return resp;
+    }));
   }
 }
