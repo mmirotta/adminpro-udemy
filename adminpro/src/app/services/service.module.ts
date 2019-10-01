@@ -6,6 +6,8 @@ import { SettingsService, SharedService, SidebarService, UsuarioService, SubirAr
          HospitalesService, MedicosService} from './service.index';
 import { ModalUploadService } from '../components/modal-upload/modal-upload.service';
 
+import { LoginGuard, AdminGuard, VerificaTokenGuard } from './service.index';
+
 @NgModule({
   declarations: [],
   imports: [
@@ -15,6 +17,9 @@ import { ModalUploadService } from '../components/modal-upload/modal-upload.serv
   providers: [SettingsService, SharedService, SidebarService,
               UsuarioService, SubirArchivoService,
               ModalUploadService, HospitalesService,
-              MedicosService],
+              MedicosService,
+              LoginGuard,
+              AdminGuard,
+              VerificaTokenGuard],
 })
 export class ServiceModule { }
