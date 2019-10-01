@@ -15,27 +15,61 @@ export class MedicosService {
   constructor(public http: HttpClient, public usuarioService: UsuarioService) { }
 
   cargarMedicos() {
-    return this.http.get(this.url + '/medico').pipe(tap((resp: any) => {
-      this.totalRegistro = resp.total;
-      return resp.medicos;
-    }));
+    return this.http.get(this.url + '/medico').pipe(
+      tap((resp: any) => {
+        this.totalRegistro = resp.total;
+        return resp.medicos;
+      })
+    );
+  }
+
+  cargarMedico(id: string) {
+    return this.http.get(this.url + '/medico/' + id).pipe(
+      tap((resp: any) => {
+        return resp.medico;
+      })
+    );
   }
 
   buscarMedico(termino: string) {
-    return this.http.get(this.url + '/busqueda/coleccion/medicos/' + termino).pipe(tap((resp: any) => {
-      return resp.medicos;
-    }));
+    return this.http
+      .get(this.url + '/busqueda/coleccion/medicos/' + termino)
+      .pipe(
+        tap((resp: any) => {
+          return resp.medicos;
+        })
+      );
   }
 
   borrarMedico(id: string) {
-    return this.http.delete(this.url + '/medico/' + id + '?token=' + this.usuarioService.token).pipe(tap((resp: any) => {
-      return resp;
-    }));
+    return this.http
+      .delete(
+        this.url + '/medico/' + id + '?token=' + this.usuarioService.token
+      )
+      .pipe(
+        tap((resp: any) => {
+          return resp;
+        })
+      );
   }
 
   guardarMedico(medico: Medico) {
-    return this.http.post(this.url + '/medico?token=' + this.usuarioService.token, medico).pipe(tap((resp: any) => {
-      return resp;
-    }));
+    if (medico._id) {
+      return this.http
+        .put(this.url + '/medico/' + medico._id + '?token=' + this.usuarioService.token, medico)
+        .pipe(
+          tap((resp: any) => {
+            return resp;
+          })
+        );
+    } else {
+      return this.http
+        .post(this.url + '/medico?token=' + this.usuarioService.token, medico)
+        .pipe(
+          tap((resp: any) => {
+            return resp;
+          })
+        );
+    }
   }
 }
