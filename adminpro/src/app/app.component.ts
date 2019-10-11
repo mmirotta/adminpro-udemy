@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
-import { SettingsService } from './services/settings/settings.service';
+
+import { SettingsService } from './services/service.index';
 
 @Component({
   selector: 'app-root',
@@ -7,6 +8,8 @@ import { SettingsService } from './services/settings/settings.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  constructor(private ajustes: SettingsService) {
-  }
+
+  constructor( public _ajustes: SettingsService ) {}
+
 }
+

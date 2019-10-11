@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { URL_SERVICE } from 'src/app/config/config';
-import { Usuario } from 'src/app/models/usuario.model';
-import { Hospital } from 'src/app/models/hospital.model';
-import { Medico } from 'src/app/models/medico.model';
+import { URL_SERVICIOS } from '../../config/config';
+import { Usuario } from '../../models/usuario.model';
+import { Medico } from '../../models/medico.model';
+import { Hospital } from '../../models/hospital.model';
 
 @Component({
   selector: 'app-busqueda',
@@ -14,25 +14,39 @@ import { Medico } from 'src/app/models/medico.model';
 export class BusquedaComponent implements OnInit {
 
   usuarios: Usuario[] = [];
-  hospitales: Hospital[] = [];
   medicos: Medico[] = [];
+  hospitales: Hospital[] = [];
 
-  constructor(public activatedRoute: ActivatedRoute, public http: HttpClient) {
-    activatedRoute.params.subscribe(params => {
-      const termino = params.termino;
-      this.buscar(termino);
-    });
+
+  constructor(
+    public activatedRoute: ActivatedRoute,
+    public http: HttpClient
+  ) {
+
+    activatedRoute.params
+      .subscribe( params => {
+        let termino = params['termino'];
+        this.buscar( termino );
+      });
+
   }
 
   ngOnInit() {
   }
 
-  buscar(termino: string) {
-    this.http.get(URL_SERVICE + '/busqueda/todo/' + termino).subscribe((resp: any) => {
-      this.hospitales = resp.hospitales;
-      this.medicos = resp.medicos;
-      this.usuarios = resp.usuarios;
-    });
+  buscar( termino: string ) {
+
+    let url = URL_SERVICIOS + '/busqueda/todo/' + termino;
+
+    this.http.get( url )
+        .subscribe( (resp: any) => {
+
+          console.log( resp );
+          this.hospitales = resp.hospitales;
+          this.medicos = resp.medicos;
+          this.usuarios = resp.usuarios;
+        });
+
   }
 
 }

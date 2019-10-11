@@ -1,9 +1,7 @@
 import { Injectable, Inject } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/platform-browser';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class SettingsService {
 
   ajustes: Ajustes = {
@@ -11,30 +9,43 @@ export class SettingsService {
     tema: 'default'
   };
 
-  constructor(@Inject(DOCUMENT) private _DOCUMENT) {
-    this.obtenerAjustes();
+  constructor( @Inject(DOCUMENT) private _document ) {
+    this.cargarAjustes();
   }
 
   guardarAjustes() {
-    localStorage.setItem('ajustes', JSON.stringify(this.ajustes));
+    // console.log('Guardado en el localStorage');
+    localStorage.setItem('ajustes', JSON.stringify( this.ajustes )  );
   }
 
-  obtenerAjustes() {
-    if (localStorage.getItem('ajustes')) {
-      this.ajustes = JSON.parse(localStorage.getItem('ajustes'));
-      this.aplicarTema(this.ajustes.tema);
+  cargarAjustes() {
+
+    if ( localStorage.getItem('ajustes') ) {
+      this.ajustes = JSON.parse( localStorage.getItem('ajustes') );
+      // console.log( 'Cargando del localstorage' );
+
+      this.aplicarTema( this.ajustes.tema );
+
+    }else {
+      // console.log( 'Usando valores por defecto' );
+      this.aplicarTema( this.ajustes.tema );
     }
+
   }
 
-  aplicarTema(tema: string) {
-    const url = 'assets/css/colors/' + tema + '.css';
-    this._DOCUMENT.getElementById('tema').setAttribute('href', url);
+  aplicarTema( tema: string ) {
+
+
+    let url = `assets/css/colors/${ tema }.css`;
+    this._document.getElementById('tema').setAttribute('href', url );
 
     this.ajustes.tema = tema;
     this.ajustes.temaUrl = url;
 
     this.guardarAjustes();
+
   }
+
 }
 
 interface Ajustes {

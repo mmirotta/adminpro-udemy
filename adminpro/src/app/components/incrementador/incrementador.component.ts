@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef } from '@angular/core';
+import { Component, Input, Output, ViewChild, OnInit, EventEmitter, ElementRef } from '@angular/core';
 
 @Component({
   selector: 'app-incrementador',
@@ -7,47 +7,62 @@ import { Component, OnInit, Input, Output, EventEmitter, ViewChild, ElementRef }
 })
 export class IncrementadorComponent implements OnInit {
 
-  @Input() percent: number = 50;
-  @Input() legend: string = 'Leyenda';
+  @ViewChild('txtProgress') txtProgress: ElementRef;
 
-  @Output() changeValueEmitter: EventEmitter<number> = new EventEmitter();
+  @Input('nombre') leyenda: string = 'Leyenda';
+  @Input() progreso: number = 50;
 
-  @ViewChild('txtPercent', { read: null, static: false}) txtPercent: ElementRef;
+  @Output('actualizaValor') cambioValor: EventEmitter<number> = new EventEmitter();
 
-  constructor() { }
+  constructor() {
+    // console.log('Leyenda', this.leyenda);
+    // console.log('progreso', this.progreso);
+  }
 
   ngOnInit() {
+    // console.log('Leyenda', this.leyenda);
+    // console.log('progreso', this.progreso);
   }
 
-  onChanges( newValue: number) {
+  onChanges( newValue: number ) {
 
-    if (newValue >= 100) {
-      this.percent = 100;
-    } else if (newValue <= 0) {
-      this.percent = 0;
-    } else {
-      this.percent = newValue;
+    // let elemHTML: any = document.getElementsByName('progreso')[0];
+
+    // console.log( this.txtProgress );
+
+    if ( newValue >= 100 ) {
+      this.progreso = 100;
+    }else if ( newValue <= 0 ) {
+      this.progreso = 0;
+    }else {
+      this.progreso = newValue;
     }
 
-    this.txtPercent.nativeElement.value = this.percent;
+    // elemHTML.value = this.progreso;
+    this.txtProgress.nativeElement.value = this.progreso;
 
-    this.changeValueEmitter.emit(this.percent);
+    this.cambioValor.emit( this.progreso );
+
   }
 
-  changeValue(value: number) {
-    if (this.percent >= 100 && value > 0) {
-      this.percent = 100;
+  cambiarValor( valor: number ) {
+
+    if ( this.progreso >= 100 && valor > 0 ) {
+      this.progreso = 100;
       return;
     }
 
-    if (this.percent <= 0 && value < 0) {
-      this.percent = 0;
+    if ( this.progreso <= 0 && valor < 0 ) {
+      this.progreso = 0;
       return;
     }
 
-    this.percent = this.percent + value;
-    this.changeValueEmitter.emit(this.percent);
-    this.txtPercent.nativeElement.focus();
+    this.progreso = this.progreso + valor;
+
+    this.cambioValor.emit( this.progreso );
+
+    this.txtProgress.nativeElement.focus();
+
   }
 
 }

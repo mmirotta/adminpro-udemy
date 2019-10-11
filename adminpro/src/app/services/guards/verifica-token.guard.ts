@@ -1,59 +1,80 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, Router, } from '@angular/router';
+import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
+import { Observable } from 'rxjs/Observable';
 import { UsuarioService } from '../usuario/usuario.service';
+import { Router } from '@angular/router';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class VerificaTokenGuard implements CanActivate {
 
-  constructor(public usuarioService: UsuarioService, public router: Router) {
-  }
+  constructor(
+    public _usuarioService: UsuarioService,
+    public router: Router
+  ) { }
 
   canActivate(): Promise<boolean> | boolean {
-    const token = this.usuarioService.token;
 
-    const payload = JSON.parse(atob(token.split('.')[1]));
+    console.log('Token guard');
 
-    const expirado = this.expiroToken(payload.exp);
+    let token = this._usuarioService.token;
+    let payload = JSON.parse( atob( token.split('.')[1] ));
 
-    if (expirado) {
+    let expirado = this.expirado( payload.exp );
+
+    if ( expirado ) {
       this.router.navigate(['/login']);
       return false;
     }
 
-    return this.verificarRenueva(payload.exp);
+
+    return this.verificaRenueva( payload.exp );
   }
 
-  verificarRenueva(fecha: number): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-      const tokenExp = new Date(fecha * 1000);
-      const ahora = new Date();
 
-      ahora.setTime(ahora.getTime() + (4 * 60 * 60 * 1000));
+  verificaRenueva( fechaExp: number ): Promise<boolean>  {
 
-      if (tokenExp.getTime() > ahora.getTime()) {
+    return new Promise( (resolve, reject) => {
+
+      let tokenExp = new Date( fechaExp * 1000 );
+      let ahora = new Date();
+
+      ahora.setTime( ahora.getTime() + ( 1 * 60 * 60 * 1000 ) );
+
+      // console.log( tokenExp );
+      // console.log( ahora );
+
+      if ( tokenExp.getTime() > ahora.getTime() ) {
         resolve(true);
       } else {
-        this.usuarioService.renuevaToken()
-          .subscribe(() => { resolve(true); },
-            () => {
-              this.router.navigate(['/login']);
-              reject(false);
-            });
+
+        this._usuarioService.renuevaToken()
+              .subscribe( () => {
+                resolve(true);
+              }, () => {
+                this.router.navigate(['/login']);
+                reject(false);
+              });
+
       }
 
-      resolve(true);
     });
+
   }
 
-  expiroToken(fecha: number) {
-    const ahora = new Date().getTime() / 1000;
 
-    if (fecha < ahora) {
+  expirado( fechaExp: number ) {
+
+    let ahora = new Date().getTime() / 1000;
+
+    if ( fechaExp < ahora ) {
       return true;
+    }else {
+      return false;
     }
 
-    return false;
+
   }
+
+
+
 }

@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { Hospital } from 'src/app/models/hospital.model';
-import { HospitalesService } from 'src/app/services/service.index';
-import { ModalUploadService } from 'src/app/components/modal-upload/modal-upload.service';
+import { Hospital } from '../../models/hospital.model';
+import { HospitalService } from '../../services/service.index';
+import { ModalUploadService } from '../../components/modal-upload/modal-upload.service';
+
 
 declare var swal: any;
 
@@ -12,80 +13,78 @@ declare var swal: any;
 })
 export class HospitalesComponent implements OnInit {
 
-  public hospitales: Hospital[] = [];
-  public cargando: boolean = false;
+  hospitales: Hospital[] = [];
 
-  constructor(public hospitalService: HospitalesService, public modalUploadService: ModalUploadService) { }
+  constructor(
+    public _hospitalService: HospitalService,
+    public _modalUploadService: ModalUploadService
+  ) { }
 
   ngOnInit() {
     this.cargarHospitales();
 
-    this.modalUploadService.notificacion.subscribe(resp => {
-      this.cargarHospitales();
-    });
+    this._modalUploadService.notificacion
+          .subscribe( () => this.cargarHospitales() );
   }
 
-  cargarHospitales() {
-    this.cargando = true;
-    this.hospitalService.cargarHospitales().subscribe(hospitales => {
-      this.hospitales = hospitales;
-      this.cargando = false;
-    });
-  }
+  buscarHospital( termino: string ) {
 
-  buscarHospital(termino: string) {
-    if (termino.length <= 0) {
+    if ( termino.length <= 0 ) {
       this.cargarHospitales();
       return;
     }
 
-    this.cargando = true;
+    this._hospitalService.buscarHospital( termino )
+            .subscribe( hospitales => this.hospitales = hospitales );
 
-    this.hospitalService.buscarHospital(termino).subscribe(resp => {
-      this.hospitales = resp.hospitales;
-      this.cargando = false;
-    });
   }
 
-  guardarHospital(hospital: Hospital) {
-    this.hospitalService.actualizarHospital(hospital)
-        .subscribe();
+  cargarHospitales() {
+    this._hospitalService.cargarHospitales()
+            .subscribe( hospitales => this.hospitales = hospitales );
   }
 
-  borrarHospital(hospital: Hospital) {
-    swal({
-      title: '¿Esta seguro?',
-      text: 'Esta a punto de borrar el hospital ' + hospital.nombre,
-      icon: 'warning',
-      buttons: true,
-      dangerMode: true
-    }).then(borrar => {
-      if (borrar) {
-        this.hospitalService.borrarHospital(hospital._id).subscribe(resp => {
-          this.cargarHospitales();
-        });
-      }
-    });
+
+  guardarHospital( hospital: Hospital) {
+
+    this._hospitalService.actualizarHospital( hospital )
+            .subscribe();
+
+  }
+
+  borrarHospital( hospital: Hospital ) {
+
+    this._hospitalService.borrarHospital( hospital._id )
+            .subscribe( () =>  this.cargarHospitales() );
+
   }
 
   crearHospital() {
+
     swal({
-      title: 'Crear Hospital',
+      title: 'Crear hospital',
       text: 'Ingrese el nombre del hospital',
-      content: 'Input',
+      content: 'input',
       icon: 'info',
       buttons: true,
       dangerMode: true
-    }).then((valor: string) => {
-      if (!valor || valor.length === 0) {
-        this.hospitalService.crearHospital(valor).subscribe(resp => {
-          this.cargarHospitales();
-        });
+    }).then( (valor: string ) => {
+
+      if ( !valor || valor.length === 0 ) {
+        return;
       }
+
+      this._hospitalService.crearHospital( valor )
+              .subscribe( () => this.cargarHospitales() );
+
     });
+
   }
 
-  mostrarModal(hospital: Hospital) {
-    this.modalUploadService.mostrarModal('hospitales', hospital._id);
+  actualizarImagen( hospital: Hospital ) {
+
+    this._modalUploadService.mostrarModal( 'hospitales', hospital._id );
+
   }
+
 }

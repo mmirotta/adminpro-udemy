@@ -1,9 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Medico } from 'src/app/models/medico.model';
-import { MedicosService } from 'src/app/services/service.index';
-import { ModalUploadService } from 'src/app/components/modal-upload/modal-upload.service';
-
-declare var swal: any;
+import { Medico } from '../../models/medico.model';
+import { MedicoService } from '../../services/service.index';
 
 @Component({
   selector: 'app-medicos',
@@ -12,59 +9,37 @@ declare var swal: any;
 })
 export class MedicosComponent implements OnInit {
 
-  public cargando: boolean = false;
   medicos: Medico[] = [];
 
-  constructor(public medicoService: MedicosService, public modalUploadService: ModalUploadService) { }
+  constructor(
+    public _medicoService: MedicoService
+  ) { }
 
   ngOnInit() {
     this.cargarMedicos();
-
-    this.modalUploadService.notificacion.subscribe(resp => {
-      this.cargarMedicos();
-    });
   }
 
   cargarMedicos() {
-    this.cargando = true;
-    this.medicoService.cargarMedicos().subscribe(medicos => {
-      this.medicos = medicos;
-      this.cargando = false;
-    });
+    this._medicoService.cargarMedicos()
+          .subscribe( medicos => this.medicos = medicos );
   }
 
-  buscarMedico(termino: string) {
-    if (termino.length <= 0) {
+  buscarMedico( termino: string ) {
+
+    if ( termino.length <= 0 ) {
       this.cargarMedicos();
       return;
     }
 
-    this.cargando = true;
-
-    this.medicoService.buscarMedico(termino).subscribe(resp => {
-      this.medicos = resp.medicos;
-      this.cargando = false;
-    });
+    this._medicoService.buscarMedicos( termino )
+            .subscribe( medicos =>  this.medicos = medicos );
   }
 
-  borrarMedico(medico: Medico) {
-    swal({
-      title: '¿Esta seguro?',
-      text: 'Esta a punto de borrar el medico ' + medico.nombre,
-      icon: 'warning',
-      buttons: true,
-      dangerMode: true
-    }).then(borrar => {
-      if (borrar) {
-        this.medicoService.borrarMedico(medico._id).subscribe(resp => {
-          this.cargarMedicos();
-        });
-      }
-    });
-  }
+  borrarMedico( medico: Medico ) {
 
-  mostrarModal(hospital: Medico) {
-    this.modalUploadService.mostrarModal('hospitales', hospital._id);
+    this._medicoService.borrarMedico( medico._id )
+            .subscribe( () =>  this.cargarMedicos() );
+
   }
 
 }
